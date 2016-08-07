@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+</head>
+<body>
+<h1>USER REGISTRATION</h1>
+<br>
+<form class="for" name="ureg" method="post" action="">
+<pre>
+Name:              <input class="name" type="text" name="name" onChange=namch() required><span id="errmsg5"></span><br><br>
+User Name:         <input class="uname" type="text" name="un" onChange=unch() required><span id="errmsg6"></span><br><br>
+Password:          <input class="pass" type="password" name="pwd" name="pass" onChange=passcor() required><span id="errmsg7"></span><br><br>
+Confirm Password:  <input class="cpass" type="password" name="cpass" onChange=passcor() required><span id="errmsg1"></span><br><br>
+Email:             <input type="email" name="email" required><br><br>
+Gender:            <input type="radio" name="gen" value="male" required>Male<input type="radio" name="gender" value="female">Female<br><br>
+Country:           <select name="country" style="width: 175px;">
+					<option value="india">India</option>
+					<option value="pakistan">Pakistan</option>
+					<option value="sri lanka">Sri Lanka</option>
+					<option value="china">China</option>
+					<option value="china">Japan</option>
+					<option value="china">Bangladesh</option>
+					</select><br><br>
+Mobile:            <input class="mob" type="number" name="mobile" onChange=mobi() required><span id="errmsg3"></span><br><br>
+Age:               <input class="age" type="number" name="age" onChange=ageval() required><span id="errmsg2"></span><br><br>
+D.O.B:             <input type="date" name="dob" required><br><br>
+Address:           
+<textarea rows="4" cols="50" name="addr" required></textarea><br><br>
+Pincode:           <input class="pin" name="pin" type="number" onChange=pc() required><span id="errmsg4"></span><br><br>
+<input id="submit" type="submit" value="SUBMIT">				<input id="reset" type="submit" value="RESET">
+</pre>
+</form>
+
+<script type="text/javascript">
+	function passcor() 
+	{
+		var password = $(".pass").val();
+		var confirmPassword = $(".cpass").val();
+		if (password != confirmPassword) 
+		{
+			$("#errmsg1").text(" Password does not match");
+			return false;
+		}
+		else
+		{
+			//alert("password true");
+			$("#errmsg1").text("");
+			return true;
+		}
+	}
+		function ageval()
+		{
+			$("#errmsg2").text(" ");
+           	var n = $(".age").val();           
+            if (n < 18) 
+            {
+                $("#errmsg2").text( " Age should be > 18");
+				return false;
+            }
+			else
+			{
+				//alert("age greater than 18");
+				$("#errmsg2").text("");
+				return true;
+			}
+        }
+		function mobi() 
+		{	
+			$("#errmsg3").text( " ");
+			var mobile = $(".mob").val();	           
+            if (mobile.length != 10) 
+            {
+                $("#errmsg3").text( " Not a valid number");
+				return false;
+            }
+			else
+			{
+				//alert("valid number");
+				$("#errmsg3").text("");
+				return true;
+			}
+	       
+        }
+		function pc() {
+		$("#errmsg4").text( " ");
+		var mobile = $(".pin").val();
+		if (mobile.length != 6) 
+		{
+			$("#errmsg4").text( " Not a Valid Pincode");
+			return false;
+		}
+		else
+		{
+			//alert("Pin Correct");
+			$("#errmsg4").text("");
+			return true;
+		}
+	}
+	function namch() 
+	{
+		$("#errmsg5").text( " ");
+		var name = $(".name").val();
+		var pattern = new RegExp("^[A-z]+$");  	
+		if (!pattern.test(name)) 
+		{
+			    $("#errmsg5").text( " Name should contain only letters");
+				return false;
+		}
+		else
+		{
+			//alert("Name correct")
+			$("#errmsg5").text("");
+			return true;
+		}
+	}	
+	function unch() 
+	{		
+		$("#errmsg6").text( " ");
+		var uname = $(".uname").val();
+		var pattern = new RegExp("^[A-z0-9]+$");      	
+		if (!pattern.test(uname)) 
+		{
+			$("#errmsg6").text( " User Name should contain only numbers and alphabets");
+			return false;
+		}
+		else
+		{
+			//alert("pattern correct");
+			var data=$(".for :input").serializeArray();
+			//alert(data);	
+			$.post(
+			{
+				url:"UNcheck",
+				data,
+				success :function(value)
+				{
+					if(value=="true")
+					{
+						//alert("found new");
+						$("#errmsg6").text("");
+						return true;
+					}
+					else
+					{
+						$(".uname").val("");
+						//alert(value);
+						$("#errmsg6").text( " User Name already taken");
+						return false;
+					}
+				}
+			});
+		}
+	}
+	$(".pass").change(function passval() 
+	{
+		$("#errmsg7").text(" ");
+		var pass = $(".pass").val();
+		if(pass.length>8)
+		{
+			var caps = /[A-Z]/.test(pass);
+			var small = /[a-z]/.test(pass);
+			var num= /[0-9]/.test(pass);
+			var sp=/\W|_/.test(pass);
+			if(caps&&small&&num&&sp)
+			{
+				$("#errmsg7").text("");
+				return true;
+			}
+			else
+			{
+				$("#errmsg7").text("Password should be of minimum 8 characters and contain atleast 1 upper case, 1 lower case, 1 digit and 1 special characters");
+				return false;
+			}
+		}
+		else
+		{
+			$("#errmsg7").text("Password should be of minimum 8 characters and contain atleast 1 upper case, 1 lower case, 1 digit and 1 special characters");
+			return false;
+		}
+	});
+	$(".for").submit(function()
+	{
+			var sendat=$(".for :input").serializeArray();
+			//alert(sendat);
+			$.post(
+			{
+				url:"InputData",
+				data:sendat
+			});
+	});
+</script>
+</body>
+</html>
